@@ -1,14 +1,18 @@
+pub static POINT_INDICATOR: f64 = 1.0;
+pub static VECTOR_INDICATOR: f64 = 0.0;
+
+
 pub fn point(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
-    (x, y, z, 1.0)
+    (x, y, z, POINT_INDICATOR)
 }
 
 pub fn vector(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
-    (x, y, z, 0.0)
+    (x, y, z, VECTOR_INDICATOR)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::tuple::{point, vector};
+    use crate::tuple::{point, POINT_INDICATOR, vector, VECTOR_INDICATOR};
 
     #[test]
     fn point_is_not_a_tuple() {
@@ -49,7 +53,7 @@ mod tests {
         assert_eq!(x, vec.0);
         assert_eq!(y, vec.1);
         assert_eq!(z, vec.2);
-        assert_eq!(0.0, vec.3);
+        assert_eq!(VECTOR_INDICATOR, vec.3);
     }
 
     #[test]
@@ -61,6 +65,6 @@ mod tests {
         assert_eq!(x, pt.0);
         assert_eq!(y, pt.1);
         assert_eq!(z, pt.2);
-        assert_eq!(1.0, pt.3);
+        assert_eq!(POINT_INDICATOR, pt.3);
     }
 }
