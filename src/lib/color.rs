@@ -40,7 +40,7 @@ pub fn multiply_by_color(left: Color, right: Color) -> Color {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::tuple::*;
+    use crate::lib::tuple::*;
 
     #[test]
     fn make_color() {

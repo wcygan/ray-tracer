@@ -1,14 +1,23 @@
+use crate::commands::{get_subcommands, global_args, run};
+use crate::programs::MakeImage;
+use clap::{AppSettings, Arg, Command};
 use image::{ImageBuffer, ImageFormat, Rgb};
 use std::path::Path;
 
-mod color;
-mod tuple;
+mod commands;
+mod lib;
+mod programs;
 
 fn main() {
-    let w = 50;
-    let h = 50;
-    let mut canvas: ImageBuffer<Rgb<u8>, Vec<u8>> = ImageBuffer::new(w, h);
-    canvas
-        .save_with_format(&Path::new("canvas.ppm"), ImageFormat::Pnm)
-        .unwrap();
+    let matches = Command::new("ray-tracer")
+        .version("0.1.0")
+        .author("Will C. <wcygan.io@gmail.com>")
+        .about("A Rust implementation of The Ray Tracer Challenge")
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .args(global_args())
+        .subcommands(get_subcommands())
+        .get_matches();
+
+    run(matches)
 }
