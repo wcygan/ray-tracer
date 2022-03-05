@@ -311,7 +311,7 @@ mod tests {
 
         let p1 = point(x1, y1, z1);
         let p2 = point(x2, y2, z2);
-        let new_pt = add_tup(p1, p2);
+        let _new_pt = add_tup(p1, p2);
     }
 
     #[test]
@@ -354,7 +354,7 @@ mod tests {
 
         let v = vector(x1, y1, z1);
         let p = point(x2, y2, z2);
-        let idk = sub_tup(v, p);
+        let _idk = sub_tup(v, p);
     }
 
     #[test]
@@ -390,7 +390,7 @@ mod tests {
     #[should_panic]
     fn negate_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
-        let vec = neg_tup(point(x1, y1, z1));
+        let _vec = neg_tup(point(x1, y1, z1));
     }
 
     #[test]
@@ -411,7 +411,7 @@ mod tests {
     fn multiply_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let scalar = 5.0;
-        let vec = mul_tup(point(x1, y1, z1), scalar);
+        let _vec = mul_tup(point(x1, y1, z1), scalar);
     }
 
     #[test]
@@ -432,7 +432,7 @@ mod tests {
     fn divide_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let scalar = 5.0;
-        let vec = div_tup(point(x1, y1, z1), scalar);
+        let _vec = div_tup(point(x1, y1, z1), scalar);
     }
 
     #[test]
@@ -460,21 +460,21 @@ mod tests {
     fn vector_magnitude_four() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let magnitude = magnitude(vector(x1, y1, z1));
-        assert!(eq_f64(magnitude, (14.0 as f64).sqrt()))
+        assert!(eq_f64(magnitude, 14.0_f64.sqrt()))
     }
 
     #[test]
     fn vector_magnitude_five() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let magnitude = magnitude(neg_tup(vector(x1, y1, z1)));
-        assert!(eq_f64(magnitude, (14.0 as f64).sqrt()))
+        assert!(eq_f64(magnitude, 14.0_f64.sqrt()))
     }
 
     #[test]
     #[should_panic]
     fn normalized_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
-        let vec = normalize(point(x1, y1, z1));
+        let _vec = normalize(point(x1, y1, z1));
     }
 
     #[test]
@@ -503,7 +503,7 @@ mod tests {
     fn dot_product_with_point_should_panic() {
         let v1 = vector(1.0, 2.0, 3.0);
         let v2 = point(2.0, 3.0, 4.0);
-        let p = dot_product(v1, v2);
+        let _p = dot_product(v1, v2);
     }
 
     #[test]
@@ -543,7 +543,7 @@ mod tests {
     fn cross_product_with_point_should_panic() {
         let v1 = vector(5.0, 1.0, 3.0);
         let p = point(1.0, 2.0, 3.0);
-        let v2 = cross_product(v1, p);
+        let _v2 = cross_product(v1, p);
     }
 
     #[test]
