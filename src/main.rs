@@ -1,8 +1,6 @@
 use crate::commands::{get_subcommands, global_args, run};
 use crate::programs::MakeImage;
-use clap::{Command};
-
-
+use clap::Command;
 
 mod commands;
 mod lib;

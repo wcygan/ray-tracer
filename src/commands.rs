@@ -14,13 +14,28 @@ pub const W: char = 'w';
 pub const H: char = 'h';
 
 pub fn run(matches: ArgMatches) {
+    let ext = matches.value_of(EXTENSION).unwrap();
+
+    match ext {
+        "jpg" => {}
+        "png" => {}
+        "ppm" => {}
+        _ => {
+            eprintln!(
+                "bad file extension: '{}' is not one of:\n1. jpg\n2. ppm\n3. png",
+                ext
+            );
+            std::process::exit(1);
+        }
+    }
+
+    let filename = format!("{}.{}", FILENAME, ext);
+
     let image = match matches.subcommand() {
         Some((ARCH, sub_matches)) => Arch::make(sub_matches),
         _ => unreachable!(),
     };
 
-    let ext = matches.value_of(EXTENSION).unwrap();
-    let filename = format!("{}.{}", FILENAME, ext);
     image.save(filename).expect("error saving image");
 }
 
