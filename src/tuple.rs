@@ -141,4 +141,16 @@ mod tests {
         assert_eq!(z, pt.2);
         assert_eq!(POINT_INDICATOR, pt.3);
     }
+
+    #[test]
+    fn f64_is_eq() {
+        let (x, y) = (1.0, 1.000001);
+        assert!(eq_f64(x, y))
+    }
+
+    #[test]
+    fn f64_is_ne() {
+        let (x, y) = (1.0, 1.1);
+        assert!(!eq_f64(x, y))
+    }
 }
