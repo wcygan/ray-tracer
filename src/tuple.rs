@@ -530,4 +530,20 @@ mod tests {
         let p = dot_product(v1, v2);
         assert!(eq_f64(p, 22.0))
     }
+
+    #[test]
+    fn dot_product_three() {
+        let v1 = normalize(vector(5.0, 1.0, 3.0));
+        let v2 = normalize(v1);
+        let p = dot_product(v1, v2);
+        assert!(eq_f64(p, 1.0))
+    }
+
+    #[test]
+    fn dot_product_four() {
+        let v1 = normalize(vector(5.0, 1.0, 3.0));
+        let v2 = normalize(neg_tup(v1));
+        let p = dot_product(v1, v2);
+        assert!(eq_f64(p, -1.0))
+    }
 }
