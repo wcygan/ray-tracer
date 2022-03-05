@@ -1,22 +1,52 @@
+pub static EPSILON: f64 = 0.00001;
 pub static POINT_INDICATOR: f64 = 1.0;
 pub static VECTOR_INDICATOR: f64 = 0.0;
 
-
+///
+/// Creates a tuple representing a point
+///
 pub fn point(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
     (x, y, z, POINT_INDICATOR)
 }
 
+///
+/// Creates a tuple representing a vector
+///
 pub fn vector(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
     (x, y, z, VECTOR_INDICATOR)
 }
 
+///
+/// Determines if this tuple is a vector
+///
 pub fn is_vector(tuple: (f64, f64, f64, f64)) -> bool {
-    tuple.3 == VECTOR_INDICATOR
+    eq_f64(tuple.3, VECTOR_INDICATOR)
 }
 
+///
+/// Determines if this tuple is a point
+///
 pub fn is_point(tuple: (f64, f64, f64, f64)) -> bool {
-    tuple.3 == POINT_INDICATOR
+    eq_f64(tuple.3, POINT_INDICATOR)
 }
+
+///
+/// Determines equality between two tuples
+///
+pub fn eq_tup(t1: (f64, f64, f64, f64), t2: (f64, f64, f64, f64)) -> bool {
+    eq_f64(t1.0, t2.0) &&
+        eq_f64(t1.1, t2.1) &&
+        eq_f64(t1.2, t2.2) &&
+        eq_f64(t1.3, t2.3)
+}
+
+///
+/// Determines equality between two 64-bit floating-point values
+///
+pub fn eq_f64(left: f64, right: f64) -> bool {
+    (left - right).abs() < EPSILON
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -65,7 +95,7 @@ mod tests {
         let pt = point(x, y, z);
         let vec = vector(x, y, z);
 
-        assert_ne!(pt, vec)
+        assert!(!eq_tup(pt, vec))
     }
 
     #[test]
@@ -75,7 +105,7 @@ mod tests {
         let pt1 = point(x, y, z);
         let pt2 = point(x, y, z);
 
-        assert_eq!(pt1, pt2)
+        assert!(eq_tup(pt1, pt2))
     }
 
     #[test]
@@ -85,7 +115,7 @@ mod tests {
         let v1 = vector(x, y, z);
         let v2 = vector(x, y, z);
 
-        assert_eq!(v1, v2)
+        assert!(eq_tup(v1, v2))
     }
 
     #[test]
