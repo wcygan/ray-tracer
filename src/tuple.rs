@@ -150,6 +150,21 @@ pub fn dot_product(left: Tuple, right: Tuple) -> f64 {
     left.0 * right.0 + left.1 * right.1 + left.2 * right.2 + left.3 * right.3
 }
 
+///
+/// Finds the cross product of a vector
+///
+pub fn cross_product(left: Tuple, right: Tuple) -> Tuple {
+    if is_point(left) || is_point(right) {
+        panic!("cannot find the cross product if left or right are points")
+    }
+    (
+        left.1 * right.2 - left.2 * right.1,
+        left.2 * right.0 - left.0 * right.2,
+        left.0 * right.1 - left.1 * right.0,
+        VECTOR_INDICATOR,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -297,12 +312,6 @@ mod tests {
         let p1 = point(x1, y1, z1);
         let p2 = point(x2, y2, z2);
         let new_pt = add_tup(p1, p2);
-
-        assert!(is_point(new_pt));
-        assert!(eq_f64(x1 + x2, new_pt.0));
-        assert!(eq_f64(y1 + y2, new_pt.1));
-        assert!(eq_f64(z1 + z2, new_pt.2));
-        assert!(eq_f64(POINT_INDICATOR, new_pt.3));
     }
 
     #[test]
@@ -346,12 +355,6 @@ mod tests {
         let v = vector(x1, y1, z1);
         let p = point(x2, y2, z2);
         let idk = sub_tup(v, p);
-
-        assert!(is_point(idk));
-        assert!(eq_f64(x1 - x2, idk.0));
-        assert!(eq_f64(y1 - y2, idk.1));
-        assert!(eq_f64(z1 - z2, idk.2));
-        assert!(eq_f64(POINT_INDICATOR, idk.3));
     }
 
     #[test]
@@ -387,14 +390,7 @@ mod tests {
     #[should_panic]
     fn negate_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
-
         let vec = neg_tup(point(x1, y1, z1));
-
-        assert!(is_vector(vec));
-        assert!(eq_f64(x1.neg(), vec.0));
-        assert!(eq_f64(y1.neg(), vec.1));
-        assert!(eq_f64(z1.neg(), vec.2));
-        assert!(eq_f64(POINT_INDICATOR, vec.3));
     }
 
     #[test]
@@ -416,12 +412,6 @@ mod tests {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let scalar = 5.0;
         let vec = mul_tup(point(x1, y1, z1), scalar);
-
-        assert!(is_point(vec));
-        assert!(eq_f64(x1.mul(scalar), vec.0));
-        assert!(eq_f64(y1.mul(scalar), vec.1));
-        assert!(eq_f64(z1.mul(scalar), vec.2));
-        assert!(eq_f64(POINT_INDICATOR, vec.3));
     }
 
     #[test]
@@ -443,12 +433,6 @@ mod tests {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let scalar = 5.0;
         let vec = div_tup(point(x1, y1, z1), scalar);
-
-        assert!(is_point(vec));
-        assert!(eq_f64(x1.div(scalar), vec.0));
-        assert!(eq_f64(y1.div(scalar), vec.1));
-        assert!(eq_f64(z1.div(scalar), vec.2));
-        assert!(eq_f64(POINT_INDICATOR, vec.3));
     }
 
     #[test]
@@ -491,7 +475,6 @@ mod tests {
     fn normalized_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let vec = normalize(point(x1, y1, z1));
-        assert!(eq_f64(magnitude(vec), 1.0))
     }
 
     #[test]
@@ -521,7 +504,6 @@ mod tests {
         let v1 = vector(1.0, 2.0, 3.0);
         let v2 = point(2.0, 3.0, 4.0);
         let p = dot_product(v1, v2);
-        assert!(eq_f64(p, 20.0))
     }
 
     #[test]
@@ -554,5 +536,35 @@ mod tests {
         let v2 = normalize(neg_tup(v1));
         let p = dot_product(v1, v2);
         assert!(eq_f64(p, -1.0))
+    }
+
+    #[test]
+    #[should_panic]
+    fn cross_product_with_point_should_panic() {
+        let v1 = vector(5.0, 1.0, 3.0);
+        let p = point(1.0, 2.0, 3.0);
+        let v2 = cross_product(v1, p);
+    }
+
+    #[test]
+    fn cross_product_one() {
+        let v1 = vector(1.0, 2.0, 3.0);
+        let v2 = vector(2.0, 3.0, 4.0);
+        let v3 = cross_product(v1, v2);
+        assert!(is_vector(v3));
+        assert!(eq_f64(-1.0, v3.0));
+        assert!(eq_f64(2.0, v3.1));
+        assert!(eq_f64(-1.0, v3.2));
+    }
+
+    #[test]
+    fn cross_product_two() {
+        let v1 = vector(1.0, 2.0, 3.0);
+        let v2 = vector(2.0, 3.0, 4.0);
+        let v3 = cross_product(v2, v1);
+        assert!(is_vector(v3));
+        assert!(eq_f64(1.0, v3.0));
+        assert!(eq_f64(-2.0, v3.1));
+        assert!(eq_f64(1.0, v3.2));
     }
 }
