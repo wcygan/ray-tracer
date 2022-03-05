@@ -1,6 +1,12 @@
+use image::Rgb;
 use std::ops::Mul;
 
+pub const RBG_MAX_INT: u8 = 255;
+pub const MAX_COLOR: f64 = 1.0;
+pub const MIN_COLOR: f64 = 0.0;
+
 pub type Color = (f64, f64, f64);
+pub type Pixel = [u8; 3];
 
 ///
 /// Creates a tuple representing a Color
@@ -35,6 +41,35 @@ pub fn multiply_by_scalar(tup: Color, scalar: f64) -> Color {
 ///
 pub fn multiply_by_color(left: Color, right: Color) -> Color {
     (left.0 * right.0, left.1 * right.1, left.2 * right.2)
+}
+
+///
+/// Creates a Pixel from a Color
+///
+pub fn color_into_pixel(c: Color) -> Pixel {
+    [c.0, c.1, c.2].map(|v| {
+        if v >= MAX_COLOR {
+            RBG_MAX_INT
+        } else if v <= 0.0 {
+            0
+        } else {
+            (RBG_MAX_INT as f64 * v).round() as u8
+        }
+    })
+}
+
+///
+/// Creates an Rgb<u8> from a Pixel
+///
+pub fn pixel_into_rgb(p: Pixel) -> Rgb<u8> {
+    Rgb(p)
+}
+
+///
+/// Creates a Rgb<u8> from a Color
+///
+pub fn color_into_rgb(c: Color) -> Rgb<u8> {
+    pixel_into_rgb(color_into_pixel(c))
 }
 
 #[cfg(test)]
@@ -103,5 +138,49 @@ mod tests {
         assert!(eq_f64(-0.5, c3.0));
         assert!(eq_f64(0.004, c3.1));
         assert!(eq_f64(3.4, c3.2));
+    }
+
+    #[test]
+    fn test_color_into_pixel_one() {
+        let (r, g, b) = (0.0, 0.0, 0.0);
+        let c = color(r, g, b);
+        let p = color_into_pixel(c);
+
+        assert_eq!(*p.get(0).unwrap(), 0);
+        assert_eq!(*p.get(1).unwrap(), 0);
+        assert_eq!(*p.get(2).unwrap(), 0);
+    }
+
+    #[test]
+    fn test_color_into_pixel_two() {
+        let (r, g, b) = (0.5452, 0.2, 0.1);
+        let c = color(r, g, b);
+        let p = color_into_pixel(c);
+
+        assert_eq!(*p.get(0).unwrap(), 139);
+        assert_eq!(*p.get(1).unwrap(), 51);
+        assert_eq!(*p.get(2).unwrap(), 26);
+    }
+
+    #[test]
+    fn test_color_into_rgb_one() {
+        let (r, g, b) = (0.0, 0.0, 0.0);
+        let c = color(r, g, b);
+        let p = color_into_rgb(c);
+
+        assert_eq!(*p.0.get(0).unwrap(), 0);
+        assert_eq!(*p.0.get(1).unwrap(), 0);
+        assert_eq!(*p.0.get(2).unwrap(), 0);
+    }
+
+    #[test]
+    fn test_color_into_rgb_two() {
+        let (r, g, b) = (0.5452, 0.2, 0.1);
+        let c = color(r, g, b);
+        let p = color_into_rgb(c);
+
+        assert_eq!(*p.0.get(0).unwrap(), 139);
+        assert_eq!(*p.0.get(1).unwrap(), 51);
+        assert_eq!(*p.0.get(2).unwrap(), 26);
     }
 }

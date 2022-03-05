@@ -1,7 +1,7 @@
 use crate::programs::arch::{Arch, ARCH};
 use crate::MakeImage;
 use clap::{Arg, ArgMatches, Command};
-use image::{ImageFormat};
+use image::ImageFormat;
 
 use std::path::Path;
 
@@ -31,12 +31,14 @@ pub fn global_args() -> Vec<Arg<'static>> {
         Arg::new(WIDTH)
             .long(WIDTH)
             .short(W)
+            .help("The width of the canvas in pixels")
             .global(true)
             .required(false)
             .default_value("1000"),
         Arg::new(HEIGHT)
             .long(HEIGHT)
             .short(H)
+            .help("The height of the canvas in pixels")
             .global(true)
             .required(false)
             .default_value("1000"),
