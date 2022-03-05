@@ -1,3 +1,5 @@
+use std::ops::Neg;
+
 pub static EPSILON: f64 = 0.00001;
 pub static POINT_INDICATOR: f64 = 1.0;
 pub static VECTOR_INDICATOR: f64 = 0.0;
@@ -49,9 +51,11 @@ pub fn eq_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> bool {
 
 ///
 /// Adds two tuples together
-/// WARNING: Behavior is undefined when adding two points together
 ///
 pub fn add_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+    if is_point(left) && is_point(right) {
+        panic!("adding two points!")
+    }
     (left.0 + right.0, left.1 + right.1, left.2 + right.2, left.3 + right.3)
 }
 
@@ -60,6 +64,17 @@ pub fn add_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64,
 ///
 pub fn sub_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
     (left.0 - right.0, left.1 - right.1, left.2 - right.2, left.3 - right.3)
+}
+
+///
+/// Subtracts the right tuple from the left tuple
+///
+pub fn neg_tup(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+    if is_point(tup) {
+        panic!("attempting to negate a point")
+    }
+
+    (tup.0.neg(), tup.1.neg(), tup.2.neg(), tup.3.neg())
 }
 
 #[cfg(test)]
@@ -201,19 +216,36 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn add_point_and_point() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let (x2, y2, z2) = (10.0, 20.0, 30.0);
+
+        let p1 = point(x1, y1, z1);
+        let p2 = point(x2, y2, z2);
+        let new_pt = add_tup(p1, p2);
+
+        assert!(is_point(new_pt));
+        assert!(eq_f64(x1 + x2, new_pt.0));
+        assert!(eq_f64(y1 + y2, new_pt.1));
+        assert!(eq_f64(z1 + z2, new_pt.2));
+        assert!(eq_f64(POINT_INDICATOR, new_pt.3));
+    }
+
+    #[test]
     fn sub_point_and_point() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let (x2, y2, z2) = (10.0, 20.0, 30.0);
 
-        let v1 = point(x1, y1, z1);
-        let v2 = point(x2, y2, z2);
-        let v3 = sub_tup(v1, v2);
+        let p1 = point(x1, y1, z1);
+        let p2 = point(x2, y2, z2);
+        let vec = sub_tup(p1, p2);
 
-        assert!(is_vector(v3));
-        assert!(eq_f64(x1 - x2, v3.0));
-        assert!(eq_f64(y1 - y2, v3.1));
-        assert!(eq_f64(z1 - z2, v3.2));
-        assert!(eq_f64(VECTOR_INDICATOR, v3.3));
+        assert!(is_vector(vec));
+        assert!(eq_f64(x1 - x2, vec.0));
+        assert!(eq_f64(y1 - y2, vec.1));
+        assert!(eq_f64(z1 - z2, vec.2));
+        assert!(eq_f64(VECTOR_INDICATOR, vec.3));
     }
 
     #[test]
@@ -221,15 +253,15 @@ mod tests {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let (x2, y2, z2) = (10.0, 20.0, 30.0);
 
-        let v1 = point(x1, y1, z1);
-        let v2 = vector(x2, y2, z2);
-        let v3 = sub_tup(v1, v2);
+        let pt = point(x1, y1, z1);
+        let vec = vector(x2, y2, z2);
+        let new_pt = sub_tup(pt, vec);
 
-        assert!(is_point(v3));
-        assert!(eq_f64(x1 - x2, v3.0));
-        assert!(eq_f64(y1 - y2, v3.1));
-        assert!(eq_f64(z1 - z2, v3.2));
-        assert!(eq_f64(POINT_INDICATOR, v3.3));
+        assert!(is_point(new_pt));
+        assert!(eq_f64(x1 - x2, new_pt.0));
+        assert!(eq_f64(y1 - y2, new_pt.1));
+        assert!(eq_f64(z1 - z2, new_pt.2));
+        assert!(eq_f64(POINT_INDICATOR, new_pt.3));
     }
 
     #[test]
@@ -246,5 +278,32 @@ mod tests {
         assert!(eq_f64(y1 - y2, v3.1));
         assert!(eq_f64(z1 - z2, v3.2));
         assert!(eq_f64(VECTOR_INDICATOR, v3.3));
+    }
+
+    #[test]
+    fn negate_a_vector() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+
+        let vec = neg_tup(vector(x1, y1, z1));
+
+        assert!(is_vector(vec));
+        assert!(eq_f64(x1.neg(), vec.0));
+        assert!(eq_f64(y1.neg(), vec.1));
+        assert!(eq_f64(z1.neg(), vec.2));
+        assert!(eq_f64(VECTOR_INDICATOR, vec.3));
+    }
+
+    #[test]
+    #[should_panic]
+    fn negate_a_point() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+
+        let vec = neg_tup(point(x1, y1, z1));
+
+        assert!(is_vector(vec));
+        assert!(eq_f64(x1.neg(), vec.0));
+        assert!(eq_f64(y1.neg(), vec.1));
+        assert!(eq_f64(z1.neg(), vec.2));
+        assert!(eq_f64(POINT_INDICATOR, vec.3));
     }
 }
