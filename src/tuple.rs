@@ -4,7 +4,7 @@ pub static EPSILON: f64 = 0.00001;
 pub static POINT_INDICATOR: f64 = 1.0;
 pub static VECTOR_INDICATOR: f64 = 0.0;
 
-type Tuple = (f64, f64, f64, f64);
+pub type Tuple = (f64, f64, f64, f64);
 
 ///
 /// Creates a tuple representing a point
