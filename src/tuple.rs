@@ -4,31 +4,33 @@ pub static EPSILON: f64 = 0.00001;
 pub static POINT_INDICATOR: f64 = 1.0;
 pub static VECTOR_INDICATOR: f64 = 0.0;
 
+type Tuple = (f64, f64, f64, f64);
+
 ///
 /// Creates a tuple representing a point
 ///
-pub fn point(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
+pub fn point(x: f64, y: f64, z: f64) -> Tuple {
     (x, y, z, POINT_INDICATOR)
 }
 
 ///
 /// Creates a tuple representing a vector
 ///
-pub fn vector(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
+pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
     (x, y, z, VECTOR_INDICATOR)
 }
 
 ///
 /// Determines if this tuple is a vector
 ///
-pub fn is_vector(tuple: (f64, f64, f64, f64)) -> bool {
+pub fn is_vector(tuple: Tuple) -> bool {
     eq_f64(tuple.3, VECTOR_INDICATOR)
 }
 
 ///
 /// Determines if this tuple is a point
 ///
-pub fn is_point(tuple: (f64, f64, f64, f64)) -> bool {
+pub fn is_point(tuple: Tuple) -> bool {
     eq_f64(tuple.3, POINT_INDICATOR)
 }
 
@@ -42,7 +44,7 @@ pub fn eq_f64(left: f64, right: f64) -> bool {
 ///
 /// Determines equality between two tuples
 ///
-pub fn eq_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> bool {
+pub fn eq_tup(left: Tuple, right: Tuple) -> bool {
     eq_f64(left.0, right.0)
         && eq_f64(left.1, right.1)
         && eq_f64(left.2, right.2)
@@ -52,7 +54,7 @@ pub fn eq_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> bool {
 ///
 /// Adds two tuples together
 ///
-pub fn add_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+pub fn add_tup(left: Tuple, right: Tuple) -> Tuple {
     if is_point(left) && is_point(right) {
         panic!("adding two points!")
     }
@@ -67,7 +69,7 @@ pub fn add_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64,
 ///
 /// Subtracts the right tuple from the left tuple
 ///
-pub fn sub_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+pub fn sub_tup(left: Tuple, right: Tuple) -> Tuple {
     if is_vector(left) && is_point(right) {
         panic!("subtracting a point from a vector!")
     }
@@ -82,7 +84,7 @@ pub fn sub_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64,
 ///
 /// Negates a tuple
 ///
-pub fn neg_tup(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+pub fn neg_tup(tup: Tuple) -> Tuple {
     if is_point(tup) {
         panic!("attempting to negate a point")
     }
@@ -93,7 +95,7 @@ pub fn neg_tup(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
 ///
 /// Multiplies a tuple by a scalar
 ///
-pub fn mul_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
+pub fn mul_tup(tup: Tuple, scalar: f64) -> Tuple {
     if is_point(tup) {
         panic!("cannot multiply a point")
     }
@@ -108,7 +110,7 @@ pub fn mul_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
 ///
 /// Divides a tuple by a scalar
 ///
-pub fn div_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
+pub fn div_tup(tup: Tuple, scalar: f64) -> Tuple {
     if is_point(tup) {
         panic!("cannot divide a point")
     }
@@ -123,14 +125,14 @@ pub fn div_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
 ///
 /// Finds the magnitude of a vector
 ///
-pub fn magnitude(tup: (f64, f64, f64, f64)) -> f64 {
+pub fn magnitude(tup: Tuple) -> f64 {
     (tup.0.powi(2) + tup.1.powi(2) + tup.2.powi(2) + tup.3.powi(2)).sqrt()
 }
 
 ///
 /// Normalize a tuple
 ///
-pub fn normalize(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+pub fn normalize(tup: Tuple) -> Tuple {
     if is_point(tup) {
         panic!("cannot normalize a point")
     }
@@ -141,7 +143,7 @@ pub fn normalize(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
 ///
 /// Finds the dot product of a vector
 ///
-pub fn dot_product(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> f64 {
+pub fn dot_product(left: Tuple, right: Tuple) -> f64 {
     if is_point(left) || is_point(right) {
         panic!("cannot find the dot product if left or right are points")
     }
