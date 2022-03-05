@@ -26,8 +26,15 @@ pub fn subtract_colors(left: Color, right: Color) -> Color {
 ///
 /// Multiplies a tuple by a scalar
 ///
-pub fn multiply_color(tup: Color, scalar: f64) -> Color {
+pub fn multiply_by_scalar(tup: Color, scalar: f64) -> Color {
     (tup.0.mul(scalar), tup.1.mul(scalar), tup.2.mul(scalar))
+}
+
+///
+/// Multiplies a tuple by a scalar
+///
+pub fn multiply_by_color(left: Color, right: Color) -> Color {
+    (left.0 * right.0, left.1 * right.1, left.2 * right.2)
 }
 
 #[cfg(test)]
@@ -73,14 +80,28 @@ mod tests {
     }
 
     #[test]
-    fn test_multiply_color() {
+    fn multiply_color_by_scalar() {
         let (r, g, b) = (-0.5, 0.4, 1.7);
         let c1 = color(r, g, b);
         let scalar = 2.0;
 
-        let c3 = multiply_color(c1, scalar);
+        let c3 = multiply_by_scalar(c1, scalar);
         assert!(eq_f64(-1.0, c3.0));
         assert!(eq_f64(0.8, c3.1));
+        assert!(eq_f64(3.4, c3.2));
+    }
+
+    #[test]
+    fn multiply_color_by_color() {
+        let (r, g, b) = (-0.5, 0.4, 1.7);
+        let c1 = color(r, g, b);
+
+        let (r, g, b) = (1.0, 0.01, 2.0);
+        let c2 = color(r, g, b);
+
+        let c3 = multiply_by_color(c1, c2);
+        assert!(eq_f64(-0.5, c3.0));
+        assert!(eq_f64(0.004, c3.1));
         assert!(eq_f64(3.4, c3.2));
     }
 }
