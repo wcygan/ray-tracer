@@ -22,7 +22,9 @@ pub const M: char = 'm';
 impl MakeImage for Arch {
     fn subcommand() -> Command<'static> {
         Command::new(ARCH)
-            .about("Creates a trajectory")
+            .about(
+                "Fires a bullet in an arching trajectory and writes the trajectory to the canvas",
+            )
             .arg(
                 Arg::new(XL)
                     .long(XL)
