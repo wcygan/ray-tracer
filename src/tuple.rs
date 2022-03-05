@@ -23,7 +23,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn verify_is_point() {
+    fn point_is_point() {
         let (x, y, z) = (1.0, 2.0, 3.0);
 
         let pt = point(x, y, z);
@@ -32,7 +32,16 @@ mod tests {
     }
 
     #[test]
-    fn verify_is_vector() {
+    fn point_is_not_vector() {
+        let (x, y, z) = (1.0, 2.0, 3.0);
+
+        let pt = point(x, y, z);
+
+        assert!(!is_vector(pt))
+    }
+
+    #[test]
+    fn vector_is_vector() {
         let (x, y, z) = (1.0, 2.0, 3.0);
 
         let vec = vector(x, y, z);
@@ -41,7 +50,16 @@ mod tests {
     }
 
     #[test]
-    fn point_is_not_a_tuple() {
+    fn vector_is_not_point() {
+        let (x, y, z) = (1.0, 2.0, 3.0);
+
+        let vec = vector(x, y, z);
+
+        assert!(!is_point(vec))
+    }
+
+    #[test]
+    fn point_is_not_equal_to_vector() {
         let (x, y, z) = (1.0, 2.0, 3.0);
 
         let pt = point(x, y, z);
