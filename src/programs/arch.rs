@@ -15,7 +15,7 @@ impl MakeImage for Arch {
 
     fn make(matches: &ArgMatches) -> ImageBuffer<Rgb<u8>, Vec<u8>> {
         let (w, h) = width_and_height(matches);
-        let _canvas = new_image_buffer(w, h);
-        todo!()
+        let canvas = new_image_buffer(w, h);
+        canvas
     }
 }
