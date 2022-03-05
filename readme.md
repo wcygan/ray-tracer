@@ -61,4 +61,4 @@ $ rtc arch -e png
     │   ├── mod.rs
     │   └── canvas.rs
     └── main.rs
-    ```
+```
