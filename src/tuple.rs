@@ -1,4 +1,4 @@
-use std::ops::Neg;
+use std::ops::{Div, Mul, Neg};
 
 pub static EPSILON: f64 = 0.00001;
 pub static POINT_INDICATOR: f64 = 1.0;
@@ -43,10 +43,10 @@ pub fn eq_f64(left: f64, right: f64) -> bool {
 /// Determines equality between two tuples
 ///
 pub fn eq_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> bool {
-    eq_f64(left.0, right.0) &&
-        eq_f64(left.1, right.1) &&
-        eq_f64(left.2, right.2) &&
-        eq_f64(left.3, right.3)
+    eq_f64(left.0, right.0)
+        && eq_f64(left.1, right.1)
+        && eq_f64(left.2, right.2)
+        && eq_f64(left.3, right.3)
 }
 
 ///
@@ -56,18 +56,31 @@ pub fn add_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64,
     if is_point(left) && is_point(right) {
         panic!("adding two points!")
     }
-    (left.0 + right.0, left.1 + right.1, left.2 + right.2, left.3 + right.3)
+    (
+        left.0 + right.0,
+        left.1 + right.1,
+        left.2 + right.2,
+        left.3 + right.3,
+    )
 }
 
 ///
 /// Subtracts the right tuple from the left tuple
 ///
 pub fn sub_tup(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
-    (left.0 - right.0, left.1 - right.1, left.2 - right.2, left.3 - right.3)
+    if is_vector(left) && is_point(right) {
+        panic!("subtracting a point from a vector!")
+    }
+    (
+        left.0 - right.0,
+        left.1 - right.1,
+        left.2 - right.2,
+        left.3 - right.3,
+    )
 }
 
 ///
-/// Subtracts the right tuple from the left tuple
+/// Negates a tuple
 ///
 pub fn neg_tup(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
     if is_point(tup) {
@@ -75,6 +88,36 @@ pub fn neg_tup(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
     }
 
     (tup.0.neg(), tup.1.neg(), tup.2.neg(), tup.3.neg())
+}
+
+///
+/// Multiplies a tuple by a scalar
+///
+pub fn mul_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
+    if is_point(tup) {
+        panic!("cannot multiply a point")
+    }
+    (
+        tup.0.mul(scalar),
+        tup.1.mul(scalar),
+        tup.2.mul(scalar),
+        tup.3.mul(scalar),
+    )
+}
+
+///
+/// Divides a tuple by a scalar
+///
+pub fn div_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
+    if is_point(tup) {
+        panic!("cannot divide a point")
+    }
+    (
+        tup.0.div(scalar),
+        tup.1.div(scalar),
+        tup.2.div(scalar),
+        tup.3.div(scalar),
+    )
 }
 
 #[cfg(test)]
@@ -265,6 +308,23 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
+    fn sub_vector_and_point() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let (x2, y2, z2) = (10.0, 20.0, 30.0);
+
+        let v = vector(x1, y1, z1);
+        let p = point(x2, y2, z2);
+        let idk = sub_tup(v, p);
+
+        assert!(is_point(idk));
+        assert!(eq_f64(x1 - x2, idk.0));
+        assert!(eq_f64(y1 - y2, idk.1));
+        assert!(eq_f64(z1 - z2, idk.2));
+        assert!(eq_f64(POINT_INDICATOR, idk.3));
+    }
+
+    #[test]
     fn sub_vector_and_vector() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let (x2, y2, z2) = (10.0, 20.0, 30.0);
@@ -304,6 +364,60 @@ mod tests {
         assert!(eq_f64(x1.neg(), vec.0));
         assert!(eq_f64(y1.neg(), vec.1));
         assert!(eq_f64(z1.neg(), vec.2));
+        assert!(eq_f64(POINT_INDICATOR, vec.3));
+    }
+
+    #[test]
+    fn multiply_a_vector() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let scalar = 5.0;
+        let vec = mul_tup(vector(x1, y1, z1), scalar);
+
+        assert!(is_vector(vec));
+        assert!(eq_f64(x1.mul(scalar), vec.0));
+        assert!(eq_f64(y1.mul(scalar), vec.1));
+        assert!(eq_f64(z1.mul(scalar), vec.2));
+        assert!(eq_f64(VECTOR_INDICATOR, vec.3));
+    }
+
+    #[test]
+    #[should_panic]
+    fn multiply_a_point() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let scalar = 5.0;
+        let vec = mul_tup(point(x1, y1, z1), scalar);
+
+        assert!(is_point(vec));
+        assert!(eq_f64(x1.mul(scalar), vec.0));
+        assert!(eq_f64(y1.mul(scalar), vec.1));
+        assert!(eq_f64(z1.mul(scalar), vec.2));
+        assert!(eq_f64(POINT_INDICATOR, vec.3));
+    }
+
+    #[test]
+    fn divide_a_vector() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let scalar = 5.0;
+        let vec = div_tup(vector(x1, y1, z1), scalar);
+
+        assert!(is_vector(vec));
+        assert!(eq_f64(x1.div(scalar), vec.0));
+        assert!(eq_f64(y1.div(scalar), vec.1));
+        assert!(eq_f64(z1.div(scalar), vec.2));
+        assert!(eq_f64(VECTOR_INDICATOR, vec.3));
+    }
+
+    #[test]
+    #[should_panic]
+    fn divide_a_point() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let scalar = 5.0;
+        let vec = div_tup(point(x1, y1, z1), scalar);
+
+        assert!(is_point(vec));
+        assert!(eq_f64(x1.div(scalar), vec.0));
+        assert!(eq_f64(y1.div(scalar), vec.1));
+        assert!(eq_f64(z1.div(scalar), vec.2));
         assert!(eq_f64(POINT_INDICATOR, vec.3));
     }
 }
