@@ -290,7 +290,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn add_point_and_point() {
+    fn add_point_and_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let (x2, y2, z2) = (10.0, 20.0, 30.0);
 
@@ -339,7 +339,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn sub_vector_and_point() {
+    fn sub_vector_and_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let (x2, y2, z2) = (10.0, 20.0, 30.0);
 
@@ -385,7 +385,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn negate_a_point() {
+    fn negate_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
 
         let vec = neg_tup(point(x1, y1, z1));
@@ -412,7 +412,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn multiply_a_point() {
+    fn multiply_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let scalar = 5.0;
         let vec = mul_tup(point(x1, y1, z1), scalar);
@@ -439,7 +439,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn divide_a_point() {
+    fn divide_a_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let scalar = 5.0;
         let vec = div_tup(point(x1, y1, z1), scalar);
@@ -488,7 +488,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn normalized_point() {
+    fn normalized_point_should_panic() {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let vec = normalize(point(x1, y1, z1));
         assert!(eq_f64(magnitude(vec), 1.0))
@@ -513,6 +513,15 @@ mod tests {
         let (x1, y1, z1) = (0.001, -0.002, -0.0003);
         let vec = normalize(vector(x1, y1, z1));
         assert!(eq_f64(magnitude(vec), 1.0))
+    }
+
+    #[test]
+    #[should_panic]
+    fn dot_product_with_point_should_panic() {
+        let v1 = vector(1.0, 2.0, 3.0);
+        let v2 = point(2.0, 3.0, 4.0);
+        let p = dot_product(v1, v2);
+        assert!(eq_f64(p, 20.0))
     }
 
     #[test]
