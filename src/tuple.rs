@@ -138,6 +138,16 @@ pub fn normalize(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
     (tup.0 / mag, tup.1 / mag, tup.2 / mag, tup.3 / mag)
 }
 
+///
+/// Finds the dot product of a vector
+///
+pub fn dot_product(left: (f64, f64, f64, f64), right: (f64, f64, f64, f64)) -> f64 {
+    if is_point(left) || is_point(right) {
+        panic!("cannot find the dot product if left or right are points")
+    }
+    left.0 * right.0 + left.1 * right.1 + left.2 * right.2 + left.3 * right.3
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -501,5 +511,21 @@ mod tests {
         let (x1, y1, z1) = (0.001, -0.002, -0.0003);
         let vec = normalize(vector(x1, y1, z1));
         assert!(eq_f64(magnitude(vec), 1.0))
+    }
+
+    #[test]
+    fn dot_product_one() {
+        let v1 = vector(1.0, 2.0, 3.0);
+        let v2 = vector(2.0, 3.0, 4.0);
+        let p = dot_product(v1, v2);
+        assert!(eq_f64(p, 20.0))
+    }
+
+    #[test]
+    fn dot_product_two() {
+        let v1 = vector(5.0, 1.0, 3.0);
+        let v2 = vector(2.0, 3.0, 3.0);
+        let p = dot_product(v1, v2);
+        assert!(eq_f64(p, 22.0))
     }
 }
