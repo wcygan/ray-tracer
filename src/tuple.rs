@@ -120,6 +120,13 @@ pub fn div_tup(tup: (f64, f64, f64, f64), scalar: f64) -> (f64, f64, f64, f64) {
     )
 }
 
+///
+/// Finds the magnitude of a vector
+///
+pub fn magnitude(tup: (f64, f64, f64, f64)) -> f64 {
+    (tup.0.powi(2) + tup.1.powi(2) + tup.2.powi(2) + tup.3.powi(2)).sqrt()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -419,5 +426,40 @@ mod tests {
         assert!(eq_f64(y1.div(scalar), vec.1));
         assert!(eq_f64(z1.div(scalar), vec.2));
         assert!(eq_f64(POINT_INDICATOR, vec.3));
+    }
+
+    #[test]
+    fn vector_magnitude_one() {
+        let (x1, y1, z1) = (1.0, 0.0, 0.0);
+        let magnitude = magnitude(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude, 1.0))
+    }
+
+    #[test]
+    fn vector_magnitude_two() {
+        let (x1, y1, z1) = (0.0, 1.0, 0.0);
+        let magnitude = magnitude(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude, 1.0))
+    }
+
+    #[test]
+    fn vector_magnitude_three() {
+        let (x1, y1, z1) = (0.0, 0.0, 1.0);
+        let magnitude = magnitude(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude, 1.0))
+    }
+
+    #[test]
+    fn vector_magnitude_four() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let magnitude = magnitude(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude, (14.0 as f64).sqrt()))
+    }
+
+    #[test]
+    fn vector_magnitude_five() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let magnitude = magnitude(neg_tup(vector(x1, y1, z1)));
+        assert!(eq_f64(magnitude, (14.0 as f64).sqrt()))
     }
 }
