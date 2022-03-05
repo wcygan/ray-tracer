@@ -141,7 +141,7 @@ pub fn normalize(tup: Tuple) -> Tuple {
 }
 
 ///
-/// Finds the dot product of a vector
+/// Finds the dot product of two vectors
 ///
 pub fn dot_product(left: Tuple, right: Tuple) -> f64 {
     if is_point(left) || is_point(right) {
@@ -151,7 +151,7 @@ pub fn dot_product(left: Tuple, right: Tuple) -> f64 {
 }
 
 ///
-/// Finds the cross product of a vector
+/// Finds the cross product of two vectors
 ///
 pub fn cross_product(left: Tuple, right: Tuple) -> Tuple {
     if is_point(left) || is_point(right) {
