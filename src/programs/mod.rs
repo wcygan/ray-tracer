@@ -1,9 +1,9 @@
 pub mod arch;
 
 use clap::{ArgMatches, Command};
-use image::{ImageBuffer, ImageFormat, Rgb};
-use std::error::Error;
-use std::path::Path;
+use image::{ImageBuffer, Rgb};
+
+
 
 pub trait MakeImage {
     fn subcommand() -> Command<'static>;

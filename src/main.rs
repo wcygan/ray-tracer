@@ -1,8 +1,8 @@
 use crate::commands::{get_subcommands, global_args, run};
 use crate::programs::MakeImage;
-use clap::{AppSettings, Arg, Command};
-use image::{ImageBuffer, ImageFormat, Rgb};
-use std::path::Path;
+use clap::{Command};
+
+
 
 mod commands;
 mod lib;

@@ -1,8 +1,8 @@
 use crate::programs::arch::{Arch, ARCH};
 use crate::MakeImage;
 use clap::{Arg, ArgMatches, Command};
-use image::{ImageBuffer, ImageFormat, Rgb};
-use std::env::Args;
+use image::{ImageFormat};
+
 use std::path::Path;
 
 pub const FILENAME: &str = "out.ppm";
