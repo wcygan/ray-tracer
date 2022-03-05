@@ -127,6 +127,17 @@ pub fn magnitude(tup: (f64, f64, f64, f64)) -> f64 {
     (tup.0.powi(2) + tup.1.powi(2) + tup.2.powi(2) + tup.3.powi(2)).sqrt()
 }
 
+///
+/// Normalize a tuple
+///
+pub fn normalize(tup: (f64, f64, f64, f64)) -> (f64, f64, f64, f64) {
+    if is_point(tup) {
+        panic!("cannot normalize a point")
+    }
+    let mag = magnitude(tup);
+    (tup.0 / mag, tup.1 / mag, tup.2 / mag, tup.3 / mag)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -461,5 +472,34 @@ mod tests {
         let (x1, y1, z1) = (1.0, 2.0, 3.0);
         let magnitude = magnitude(neg_tup(vector(x1, y1, z1)));
         assert!(eq_f64(magnitude, (14.0 as f64).sqrt()))
+    }
+
+    #[test]
+    #[should_panic]
+    fn normalized_point() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let vec = normalize(point(x1, y1, z1));
+        assert!(eq_f64(magnitude(vec), 1.0))
+    }
+
+    #[test]
+    fn normalized_vector_one() {
+        let (x1, y1, z1) = (1.0, 2.0, 3.0);
+        let vec = normalize(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude(vec), 1.0))
+    }
+
+    #[test]
+    fn normalized_vector_two() {
+        let (x1, y1, z1) = (100.223, -2.0, -3113.0);
+        let vec = normalize(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude(vec), 1.0))
+    }
+
+    #[test]
+    fn normalized_vector_three() {
+        let (x1, y1, z1) = (0.001, -0.002, -0.0003);
+        let vec = normalize(vector(x1, y1, z1));
+        assert!(eq_f64(magnitude(vec), 1.0))
     }
 }
