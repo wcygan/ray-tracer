@@ -10,9 +10,35 @@ pub fn vector(x: f64, y: f64, z: f64) -> (f64, f64, f64, f64) {
     (x, y, z, VECTOR_INDICATOR)
 }
 
+pub fn is_vector(tuple: (f64, f64, f64, f64)) -> bool {
+    tuple.3 == VECTOR_INDICATOR
+}
+
+pub fn is_point(tuple: (f64, f64, f64, f64)) -> bool {
+    tuple.3 == POINT_INDICATOR
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::tuple::{point, POINT_INDICATOR, vector, VECTOR_INDICATOR};
+    use super::*;
+
+    #[test]
+    fn verify_is_point() {
+        let (x, y, z) = (1.0, 2.0, 3.0);
+
+        let pt = point(x, y, z);
+
+        assert!(is_point(pt))
+    }
+
+    #[test]
+    fn verify_is_vector() {
+        let (x, y, z) = (1.0, 2.0, 3.0);
+
+        let vec = vector(x, y, z);
+
+        assert!(is_vector(vec))
+    }
 
     #[test]
     fn point_is_not_a_tuple() {
