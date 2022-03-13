@@ -48,13 +48,13 @@ mod tests {
     fn matrices_are_equal() {
         let mut m1 = Matrix2x2::new(-3.0, 5.0, 1.0, -2.0);
         let mut m2 = Matrix2x2::new(-3.0, 5.0, 1.0, -2.0);
-        assert!(m1.eq(&m2))
+        assert!(m1.relative_eq(&m2, f64::EPSILON, f64::EPSILON))
     }
 
     #[test]
     fn matrices_are_not_equal() {
         let mut m1 = Matrix2x2::new(-2.95, 5.0, 1.0, -2.0);
         let mut m2 = Matrix2x2::new(-3.0, 5.0, 1.0, -2.0);
-        assert!(!m1.eq(&m2))
+        assert!(!m1.relative_eq(&m2, f64::EPSILON, f64::EPSILON))
     }
 }
