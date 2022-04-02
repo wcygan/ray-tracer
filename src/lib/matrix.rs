@@ -10,7 +10,27 @@ mod tests {
     use super::*;
     use crate::lib::tuple::{eq_f64, Tuple};
     use nalgebra::Matrix;
-    use std::ops::Mul;
+    use std::ops::{Mul, Sub};
+
+    fn sub_matrix_4x4(m: &Matrix4x4, row: usize, col: usize) -> Matrix3x3 {
+        m.remove_row(row).remove_column(col)
+    }
+
+    fn sub_matrix_3x3(m: &Matrix3x3, row: usize, col: usize) -> Matrix2x2 {
+        m.remove_row(row).remove_column(col)
+    }
+
+    fn minor(m: &Matrix4x4, row: usize, col: usize) -> f64 {
+        sub_matrix_4x4(m, row, col).determinant()
+    }
+
+    /*
+     * we may be able to get away with not implementing this and instead relying on nalgebra's
+     * determinants to just work
+     */
+    // fn cofactor(m: &Matrix3x3, row: usize, col: usize) -> f64 {
+    //     todo!()
+    // }
 
     #[test]
     fn matrix_constructs_properly_4x4() {
@@ -85,13 +105,9 @@ mod tests {
         let mut m1 = Matrix4x4::new(
             1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
         );
-
         let mut m2 = Matrix4x1::new(1.0, 2.0, 3.0, 1.0);
-
         let m3 = m1.mul(m2);
-
         let mut expected = Matrix4x1::new(18.0, 24.0, 33.0, 1.0);
-
         assert!(expected.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
     }
 
@@ -100,10 +116,8 @@ mod tests {
         let mut m1 = Matrix4x4::new(
             1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
         );
-
-        let m3 = m1.mul(Matrix4x4::identity());
-
-        assert!(m1.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
+        let m2 = m1.mul(Matrix4x4::identity());
+        assert!(m1.relative_eq(&m2, f64::EPSILON, f64::EPSILON));
     }
 
     #[test]
@@ -111,13 +125,52 @@ mod tests {
         let mut m1 = Matrix4x4::new(
             1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
         );
-
-        let mut m2 = Matrix4x4::new(
+        let m2 = m1.transpose();
+        let mut expected = Matrix4x4::new(
             1.0, 2.0, 8.0, 0.0, 2.0, 4.0, 6.0, 0.0, 3.0, 4.0, 4.0, 0.0, 4.0, 2.0, 1.0, 1.0,
         );
+        assert!(m2.relative_eq(&m2, f64::EPSILON, f64::EPSILON));
+    }
 
-        let m3 = m1.transpose();
+    #[test]
+    fn matrix_determinant() {
+        let mut m1 = Matrix2x2::new(1.0, 5.0, -3.0, 2.0);
+        let det = m1.determinant();
+        assert!(eq_f64(17.0, det));
+    }
 
-        assert!(m3.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
+    #[test]
+    fn matrix_resize_3x3() {
+        let mut m1 = Matrix3x3::new(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0);
+        let m2 = sub_matrix_3x3(&m1, 0, 0);
+        let m3 = Matrix2x2::new(5.0, 6.0, 8.0, 9.0);
+        assert!(m3.relative_eq(&m2, f64::EPSILON, f64::EPSILON));
+    }
+
+    #[test]
+    fn matrix_resize_4x4() {
+        let mut m1 = Matrix4x4::new(
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0,
+        );
+        let m2 = sub_matrix_4x4(&m1, 0, 0);
+        let m3 = Matrix3x3::new(6.0, 7.0, 8.0, 10.0, 11.0, 12.0, 14.0, 15.0, 16.0);
+        assert!(m3.relative_eq(&m2, f64::EPSILON, f64::EPSILON));
+    }
+
+    #[test]
+    fn minor_4x4() {
+        let mut m1 = Matrix4x4::new(
+            1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0,
+        );
+        let m2 = sub_matrix_4x4(&m1, 0, 0);
+        assert!(eq_f64(m2.determinant(), minor(&m1, 0, 0)));
+    }
+
+    #[test]
+    fn determinant_4x4() {
+        let mut m1 = Matrix4x4::new(
+            -2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0,
+        );
+        assert!(eq_f64(-4071.0, m1.determinant()));
     }
 }
