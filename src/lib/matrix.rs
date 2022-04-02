@@ -105,4 +105,19 @@ mod tests {
 
         assert!(m1.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
     }
+
+    #[test]
+    fn matrix_transpose() {
+        let mut m1 = Matrix4x4::new(
+            1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+        );
+
+        let mut m2 = Matrix4x4::new(
+            1.0, 2.0, 8.0, 0.0, 2.0, 4.0, 6.0, 0.0, 3.0, 4.0, 4.0, 0.0, 4.0, 2.0, 1.0, 1.0,
+        );
+
+        let m3 = m1.transpose();
+
+        assert!(m3.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
+    }
 }
