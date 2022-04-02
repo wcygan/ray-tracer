@@ -9,9 +9,8 @@ pub type Matrix4x1 = SMatrix<f64, 4, 1>;
 mod tests {
     use super::*;
     use crate::lib::tuple::{eq_f64, Tuple};
+    use nalgebra::Matrix;
     use std::ops::Mul;
-
-    // pub fn mul_by_tup(mx: Matrix4x4, t: Tuple) -> Tuple {}
 
     #[test]
     fn matrix_constructs_properly_4x4() {
@@ -94,5 +93,16 @@ mod tests {
         let mut expected = Matrix4x1::new(18.0, 24.0, 33.0, 1.0);
 
         assert!(expected.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
+    }
+
+    #[test]
+    fn matrix_identity() {
+        let mut m1 = Matrix4x4::new(
+            1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 4.0, 2.0, 8.0, 6.0, 4.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+        );
+
+        let m3 = m1.mul(Matrix4x4::identity());
+
+        assert!(m1.relative_eq(&m3, f64::EPSILON, f64::EPSILON));
     }
 }
