@@ -252,4 +252,11 @@ mod tests {
         let rel = 0.000001;
         assert!(a.relative_eq(&d, rel, rel));
     }
+
+    #[test]
+    fn identity_inverse() {
+        let a = Matrix4x4::identity();
+        let b = a.try_inverse().unwrap();
+        assert!(a.relative_eq(&b, f64::EPSILON, f64::EPSILON));
+    }
 }
