@@ -8,7 +8,7 @@ pub type Matrix4x1 = SMatrix<f64, 4, 1>;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::lib::tuple::{eq_f64, Tuple};
+    use crate::lib::tuple::{eq_f64, Tuple, EPSILON};
     use nalgebra::Matrix;
     use std::ops::{Mul, Sub};
 
@@ -24,13 +24,9 @@ mod tests {
         sub_matrix_4x4(m, row, col).determinant()
     }
 
-    /*
-     * we may be able to get away with not implementing this and instead relying on nalgebra's
-     * determinants to just work
-     */
-    // fn cofactor(m: &Matrix3x3, row: usize, col: usize) -> f64 {
-    //     todo!()
-    // }
+    fn is_invertible(m: &Matrix4x4) -> bool {
+        !eq_f64(0.0, m.determinant())
+    }
 
     #[test]
     fn matrix_constructs_properly_4x4() {
@@ -172,5 +168,88 @@ mod tests {
             -2.0, -8.0, 3.0, 5.0, -3.0, 1.0, 7.0, 3.0, 1.0, 2.0, -9.0, 6.0, -6.0, 7.0, 7.0, -9.0,
         );
         assert!(eq_f64(-4071.0, m1.determinant()));
+    }
+
+    #[test]
+    fn determinant_of_4x4_is_zero() {
+        let mut m1 = Matrix4x4::new(
+            -4.0, 2.0, -2.0, -3.0, 9.0, 6.0, 2.0, 6.0, 0.0, -5.0, 1.0, -5.0, 0.0, 0.0, 0.0, 0.0,
+        );
+        assert!(eq_f64(0.0, m1.determinant()));
+        assert!(!is_invertible(&m1));
+    }
+
+    #[test]
+    fn determinant_of_4x4_is_not_zero() {
+        let mut m1 = Matrix4x4::new(
+            6.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 6.0, 4.0, -9.0, 3.0, -7.0, 9.0, 1.0, 7.0, -6.0,
+        );
+        let a = -2120.0;
+        let b = m1.determinant();
+        assert!(eq_f64(a, b));
+        assert!(is_invertible(&m1));
+    }
+
+    #[test]
+    fn inverse_of_4x4() {
+        let mut a = Matrix4x4::new(
+            -5.0, 2.0, 6.0, -8.0, 1.0, -5.0, 1.0, 8.0, 7.0, 7.0, -6.0, -7.0, 1.0, -3.0, 7.0, 4.0,
+        );
+
+        let b = a.try_inverse();
+        assert!(b.is_some());
+        let b = b.unwrap();
+        assert!(eq_f64(b[(0, 0)], 0.21805));
+        assert!(eq_f64(b[(1, 1)], -1.45677));
+        assert!(eq_f64(b[(2, 0)], -0.07895));
+        assert!(eq_f64(b[(0, 2)], 0.24060));
+    }
+
+    #[test]
+    fn inverse_of_4x4_example_two() {
+        // let mut a = Matrix4x4::new(8.0, -5.0);
+
+        // let b = a.try_inverse();
+        // assert!(b.is_some());
+        // let b = b.unwrap();
+        // assert!(eq_f64(b[(0, 0)], 0.21805));
+        // assert!(eq_f64(b[(1, 1)], -1.45677));
+        // assert!(eq_f64(b[(2, 0)], -0.07895));
+        // assert!(eq_f64(b[(0, 2)], 0.24060));
+    }
+
+    #[test]
+    fn inverse_of_4x4_example_three() {
+        let mut a = Matrix4x4::new(
+            8.0, -5.0, 9.0, 2.0, 7.0, 5.0, 6.0, 1.0, -6.0, 0.0, 9.0, 6.0, -3.0, 0.0, -9.0, -4.0,
+        );
+
+        let b = a.try_inverse();
+        assert!(b.is_some());
+        let b = b.unwrap();
+        assert!(eq_f64(b[(0, 0)], -0.15385));
+        let x = b[(1, 1)];
+        assert!(eq_f64(x, 0.12308));
+        let x = b[(2, 0)];
+        assert!(eq_f64(x, 0.35897));
+        let x = b[(0, 2)];
+        assert!(eq_f64(x, -0.28205));
+    }
+
+    #[test]
+    fn product_inverse() {
+        let mut a = Matrix4x4::new(
+            3.0, -9.0, 7.0, 3.0, 3.0, -8.0, 2.0, -9.0, -4.0, 4.0, 4.0, 1.0, -6.0, 5.0, -1.0, 1.0,
+        );
+
+        let mut b = Matrix4x4::new(
+            8.0, 2.0, 2.0, 2.0, 3.0, -1.0, 7.0, 0.0, 7.0, 0.0, 5.0, 4.0, 6.0, -2.0, 0.0, 5.0,
+        );
+
+        let c = a.mul(b);
+
+        let d = c.mul(b.try_inverse().unwrap());
+        let rel = 0.000001;
+        assert!(a.relative_eq(&d, rel, rel));
     }
 }
