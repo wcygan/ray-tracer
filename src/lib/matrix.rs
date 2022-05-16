@@ -8,7 +8,8 @@ pub type Matrix4x1 = SMatrix<f64, 4, 1>;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::lib::tuple::{eq_f64, Tuple, EPSILON};
+    use crate::lib::tuple::{eq_f64, point, Tuple, EPSILON};
+    use crate::programs::arch::M;
     use nalgebra::Matrix;
     use std::ops::{Mul, Sub};
 
@@ -26,6 +27,28 @@ mod tests {
 
     fn is_invertible(m: &Matrix4x4) -> bool {
         !eq_f64(0.0, m.determinant())
+    }
+
+    fn translation(x: f64, y: f64, z: f64) -> Matrix4x4 {
+        let mut m = Matrix4x4::identity();
+        m[(0, 3)] = x;
+        m[(1, 3)] = y;
+        m[(2, 3)] = z;
+        m
+    }
+
+    fn tup_into_4x1(t: Tuple) -> Matrix4x1 {
+        let (a, b, c, d) = t;
+        Matrix4x1::new(a, b, c, d)
+    }
+
+    fn m4x1_into_tup(m: &Matrix4x1) -> Tuple {
+        let data = m.data.0[0];
+        (data[0], data[1], data[2], data[3])
+    }
+
+    fn mul_4x4_and_4x1(m1: &Matrix4x4, m2: &Matrix4x1) -> Matrix4x1 {
+        m1.mul(m2)
     }
 
     #[test]
@@ -258,5 +281,26 @@ mod tests {
         let a = Matrix4x4::identity();
         let b = a.try_inverse().unwrap();
         assert!(a.relative_eq(&b, f64::EPSILON, f64::EPSILON));
+    }
+
+    #[test]
+    fn translation_one() {
+        let m1 = translation(5.0, -3.0, 2.0);
+        let p = point(-3.0, 4.0, 5.0);
+        let m4x1 = tup_into_4x1(p);
+        let multiplied = mul_4x4_and_4x1(&m1, &m4x1);
+        let tup = m4x1_into_tup(&multiplied);
+        assert_eq!(tup, (2.0, 1.0, 7.0, 1.0))
+    }
+
+    #[test]
+    fn translation_two() {
+        let m1 = translation(5.0, -3.0, 2.0);
+        let m2 = m1.try_inverse().unwrap();
+        let p = point(-3.0, 4.0, 5.0);
+        let m4x1 = tup_into_4x1(p);
+        let multiplied = mul_4x4_and_4x1(&m2, &m4x1);
+        let tup = m4x1_into_tup(&multiplied);
+        assert_eq!(tup, (-8.0, 7.0, 3.0, 1.0))
     }
 }
